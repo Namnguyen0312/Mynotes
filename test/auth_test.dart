@@ -95,6 +95,7 @@ void main() {
       test(
         'Logged in user should be able to get verified',
         () {
+          provider.sendEmailVerification();
           final user = provider.currentUser;
           expect(
             user,
@@ -114,12 +115,12 @@ void main() {
             email: 'email',
             password: 'password',
           );
+          final user = provider.currentUser;
+          expect(
+            user,
+            isNotNull,
+          );
         },
-      );
-      final user = provider.currentUser;
-      expect(
-        user,
-        isNotNull,
       );
     },
   );
@@ -161,7 +162,10 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInittializedException();
     if (email == 'nam@nguyen.com') throw UserNotFoundAuthException();
     if (password == '123456') throw WrongPasswordAuthException();
-    const user = AuthUser(isEmailVerified: false);
+    const user = AuthUser(
+      isEmailVerified: false,
+      email: 'nam@nguyen.com',
+    );
     _user = user;
     return Future.value(user);
   }
@@ -179,7 +183,10 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInittializedException();
     final user = _user;
     if (user == null) throw UserNotFoundAuthException();
-    const newUser = AuthUser(isEmailVerified: true);
+    const newUser = AuthUser(
+      isEmailVerified: true,
+      email: 'nam@nguyen.com',
+    );
     _user = newUser;
   }
 }
